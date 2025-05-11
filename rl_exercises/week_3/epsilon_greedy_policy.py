@@ -37,6 +37,7 @@ class EpsilonGreedyPolicy(object):
         AssertionError
             If `epsilon` is not in the range [0, 1].
         """
+
         assert 0 <= epsilon <= 1, "ε must be in [0,1]"
         self.env = env
         self.epsilon = epsilon
@@ -61,14 +62,10 @@ class EpsilonGreedyPolicy(object):
         int
             The selected action
         """
-
-        # If evaluation mode, skip exploration entirely
-        if evaluate:
+        r = self.rng.random()
+        actions = self.env.action_space.n
+        if evaluate:  # If evaluation mode, skip exploration entirely
             return int(np.argmax(Q[state]))
-
-        # TODO: Implement epsilon-greedy action selection
-        # With prob 1 - epsilon return the greedy action
-        # Wtih prob epsilon, use the policy's RNG to select a random action
-        # Return the selected action -- currently always returns 0
-
-        return 0
+        if r < self.epsilon:
+            return self.rng.integers(actions)
+        return int(np.argmax(Q[state]))
